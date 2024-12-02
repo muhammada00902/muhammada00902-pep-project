@@ -59,7 +59,7 @@ public class AccountService {
         String uname = account.getUsername();
         
         // username is not blank
-        if (uname == null) {
+        if (uname == null || uname.length() == 0) {
             return false;
         }
 

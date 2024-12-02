@@ -31,7 +31,7 @@ public class MessageDAO {
                 int generated_message_id = (int) pkeyResultSet.getLong(1);
                 int postedById = message.getPosted_by();
                 String text =  message.getMessage_text();
-                Long time = message.getTime_posted_epoch();
+                long time = message.getTime_posted_epoch();
                 return new Message(generated_message_id, postedById, text, time);
             }
         }catch(SQLException e){
@@ -53,7 +53,7 @@ public class MessageDAO {
                 int id = rs.getInt("message_id");
                 int postedby = rs.getInt("posted_by");
                 String text = rs.getString("message_text");
-                Long time = rs.getLong("time_posted_epoch");
+                long time = rs.getLong("time_posted_epoch");
                
                 Message message = new Message(id, postedby, text, time);
                 
@@ -78,7 +78,7 @@ public class MessageDAO {
 
                 int postedby = rs.getInt("posted_by");
                 String text = rs.getString("message_text");
-                Long time = rs.getLong("time_posted_epoch");
+                long time = rs.getLong("time_posted_epoch");
                
                 return new Message(id, postedby, text, time);
             }
@@ -91,48 +91,34 @@ public class MessageDAO {
     public Message deleteMessageById(int id) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql =  "DELETE FROM message m where m.message_id = ?";
+            String sql =  "DELETE FROM message where message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setInt(1, id);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
-
-                int postedby = rs.getInt("posted_by");
-                String text = rs.getString("message_text");
-                Long time = rs.getLong("time_posted_epoch");
-               
-                return new Message(id, postedby, text, time);
-            }
+            preparedStatement.executeUpdate();
+            
         } catch(SQLException e){
             System.out.println(e.getMessage());
         }
         return null;
     }
 
-    public Message updateMessageById(int id, String newText) {
+    public int updateMessageById(int id, String newText) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql =  "UPDATE message m SET message_text = ? where m.message_id = ?";
+            String sql =  "UPDATE message SET message_text = ? where message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, newText);
             preparedStatement.setInt(2, id);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
-
-                int postedby = rs.getInt("posted_by");
-                String text = rs.getString("message_text");
-                Long time = rs.getLong("time_posted_epoch");
-               
-                return new Message(id, postedby, text, time);
-            }
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected;
         } catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return -1;
     }
 
     public List<Message> getAllMessagesOfUser(int userId){
@@ -149,7 +135,7 @@ public class MessageDAO {
                 int id = rs.getInt("message_id");
                 int postedby = rs.getInt("posted_by");
                 String text = rs.getString("message_text");
-                Long time = rs.getLong("time_posted_epoch");
+                long time = rs.getLong("time_posted_epoch");
                
                 Message message = new Message(id, postedby, text, time);
                 

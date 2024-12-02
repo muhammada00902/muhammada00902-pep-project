@@ -41,13 +41,15 @@ public class MessageService {
     }
 
     public Message deleteMessage(int id) {
-        return messageDAO.deleteMessageById(id);
+        Message msg = getMessage(id);
+        messageDAO.deleteMessageById(id);
+        return msg;
     }
 
     public Message updateMessage(int id, Message messageWithText) {
-        String newMessageText = messageWithText.getMessage_text();
-
-        if (newMessageText == null || newMessageText.length() > 255) {
+        String newMessageText = messageWithText.getMessage_text(); 
+                                                                        
+        if (newMessageText == null || newMessageText.length() > 255 || newMessageText.length() == 0) {
             return null;
         }
 
@@ -55,7 +57,12 @@ public class MessageService {
             return null;
         }
 
-        return messageDAO.updateMessageById(id, newMessageText);
+        int rowsAffectedAfterUpdate = messageDAO.updateMessageById(id, newMessageText);
+        if (rowsAffectedAfterUpdate == 1) {
+            return getMessage(id);
+        }
+
+        return null;
 
     }
 
@@ -68,7 +75,7 @@ public class MessageService {
     public boolean isValidMessage(Message message) {
         // message_text is not blank and under 255 chars
         String messageText = message.getMessage_text();
-        if (messageText == null || messageText.length() >= 255) {
+        if (messageText == null || messageText.length() == 0 || messageText.length() >= 255) {
             return false;
         }
         
